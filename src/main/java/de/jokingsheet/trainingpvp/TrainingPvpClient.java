@@ -6,7 +6,6 @@ import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
-import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
@@ -60,7 +59,7 @@ public final class TrainingPvpClient implements ClientModInitializer {
     }
 
     /**
-     * Gives harmless building and movement supplies for solo practice.
+     * Gives building materials for solo parkour and bridging practice.
      * Existing inventory contents are never cleared or replaced.
      */
     public static void giveMovementKit(Minecraft client) {
@@ -74,12 +73,10 @@ public final class TrainingPvpClient implements ClientModInitializer {
         inventory.add(new ItemStack(Items.SLIME_BLOCK, 16));
         inventory.add(new ItemStack(Items.HONEY_BLOCK, 16));
         inventory.add(new ItemStack(Items.WATER_BUCKET, 1));
-        inventory.add(new ItemStack(Items.ENDER_PEARL, 8));
-        inventory.add(new ItemStack(Items.FIREWORK_ROCKET, 16));
 
         TrainingStats.recordKitClaim();
         client.player.displayClientMessage(
-                Component.literal("§aMovement-Kit hinzugefügt! §7Dein Inventar wurde nicht geleert."),
+                Component.literal("§aParkour-Kit hinzugefügt! §7Dein Inventar wurde nicht geleert."),
                 false
         );
     }
