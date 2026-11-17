@@ -33,7 +33,7 @@ public final class AcademyScreen extends Screen {
         addNavButton("START", left + 18, top + 76, Page.HOME);
         addNavButton("MOVEMENT LAB", left + 18, top + 108, Page.MOVEMENT);
         addNavButton("KIT LOCKER", left + 18, top + 140, Page.KIT);
-        addNavButton("TICK MONITOR", left + 18, top + 172, Page.MONITOR);
+        addNavButton("PERFORMANCE MONITOR", left + 18, top + 172, Page.MONITOR);
         addNavButton("STATS", left + 18, top + 204, Page.STATS);
 
         int actionX = left + 170;
@@ -95,7 +95,7 @@ public final class AcademyScreen extends Screen {
             }
             case MOVEMENT -> {
                 heading(g, "MOVEMENT LAB", x, y);
-                line(g, "01  Sprint control: run a straight line, then repeat with short strafes.", x, y + 34);
+                line(g, "01  Sprint control: run a straight line, then repeat with clean 90-degree turns.", x, y + 34);
                 line(g, "02  Jump rhythm: clear a row of one-block gaps without stopping.", x, y + 58);
                 line(g, "03  Bridging: build a straight 20-block path, then a diagonal path.", x, y + 82);
                 line(g, "04  Landing control: use water, slime and honey blocks in a safe test area.", x, y + 106);
@@ -110,12 +110,12 @@ public final class AcademyScreen extends Screen {
                 line(g, "The button below adds items; it never clears your inventory.", x, y + 130);
             }
             case MONITOR -> {
-                heading(g, "CLIENT TICK MONITOR", x, y);
-                line(g, "Measured client logic ticks in the last one-second window:", x, y + 36);
+                heading(g, "CLIENT PERFORMANCE", x, y);
+                line(g, "Measured client logic ticks over the last one-second window:", x, y + 36);
                 statCard(g, x, y + 76, "CLIENT TICKS", TrainingPvpClient.getMeasuredClientTicks() + " / s");
                 line(g, "Minecraft's normal game-loop target is 20 ticks per second.", x, y + 154);
                 line(g, "This is a local client estimate, not a server TPS reading.", x, y + 178);
-                line(g, "Use it to spot local slowdowns during movement practice.", x, y + 202);
+                line(g, "Use this local reading to spot slowdowns during parkour practice.", x, y + 202);
             }
             case STATS -> {
                 heading(g, "SESSION STATS", x, y);
