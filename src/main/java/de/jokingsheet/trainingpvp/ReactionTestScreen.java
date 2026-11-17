@@ -5,7 +5,6 @@ import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
 import net.minecraft.network.chat.Component;
-import org.lwjgl.glfw.GLFW;
 
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -16,6 +15,7 @@ public final class ReactionTestScreen extends Screen {
     private long readyAtNanos;
     private long nextReadyNanos;
     private long resultMs = -1;
+    private Button actionButton;
 
     public ReactionTestScreen() {
         super(Component.literal("Reaction Test"));
@@ -27,16 +27,40 @@ public final class ReactionTestScreen extends Screen {
         resultMs = -1;
         long delayMs = ThreadLocalRandom.current().nextLong(1500, 4001);
         nextReadyNanos = System.nanoTime() + delayMs * 1_000_000L;
+        if (actionButton != null) {
+            actionButton.setMessage(Component.literal("WAIT FOR GREEN"));
+        }
     }
 
     @Override
     protected void init() {
         int center = width / 2;
-        addRenderableWidget(Button.builder(Component.literal("TRY AGAIN"), button -> resetRound())
-                .bounds(center - 110, height / 2 + 68, 100, 20).build());
+        actionButton = Button.builder(Component.literal("WAIT FOR GREEN"), button -> handleTap())
+                .bounds(center - 110, height / 2 + 42, 220, 24).build();
+        addRenderableWidget(actionButton);
+
         addRenderableWidget(Button.builder(Component.literal("BACK TO MENU"), button ->
                 Minecraft.getInstance().setScreen(new AcademyScreen()))
-                .bounds(center + 10, height / 2 + 68, 112, 20).build());
+                .bounds(center - 70, height / 2 + 78, 140, 20).build());
+    }
+
+    private void handleTap() {
+        if (state == State.WAITING) {
+            state = State.TOO_EARLY;
+            TrainingStats.recordEarlyPress();
+            actionButton.setMessage(Component.literal("TRY AGAIN"));
+            return;
+        }
+
+        if (state == State.READY) {
+            resultMs = (System.nanoTime() - readyAtNanos) / 1_000_000L;
+            state = State.RESULT;
+            TrainingStats.recordReaction(resultMs);
+            actionButton.setMessage(Component.literal("TRY AGAIN"));
+            return;
+        }
+
+        resetRound();
     }
 
     @Override
@@ -44,29 +68,10 @@ public final class ReactionTestScreen extends Screen {
         if (state == State.WAITING && System.nanoTime() >= nextReadyNanos) {
             state = State.READY;
             readyAtNanos = System.nanoTime();
-        }
-    }
-
-    @Override
-    public boolean keyPressed(int keyCode, int scanCode, int modifiers) {
-        if (keyCode == GLFW.GLFW_KEY_SPACE) {
-            if (state == State.WAITING) {
-                state = State.TOO_EARLY;
-                TrainingStats.recordEarlyPress();
-                return true;
-            }
-            if (state == State.READY) {
-                resultMs = (System.nanoTime() - readyAtNanos) / 1_000_000L;
-                state = State.RESULT;
-                TrainingStats.recordReaction(resultMs);
-                return true;
-            }
-            if (state == State.RESULT || state == State.TOO_EARLY) {
-                resetRound();
-                return true;
+            if (actionButton != null) {
+                actionButton.setMessage(Component.literal("CLICK NOW!"));
             }
         }
-        return super.keyPressed(keyCode, scanCode, modifiers);
     }
 
     @Override
@@ -89,7 +94,7 @@ public final class ReactionTestScreen extends Screen {
                 color = 0xFFFFC857;
             }
             case READY -> {
-                main = "PRESS SPACE!";
+                main = "GO! GO! GO!";
                 color = 0xFF43D9C5;
             }
             case RESULT -> {
@@ -108,8 +113,8 @@ public final class ReactionTestScreen extends Screen {
 
         graphics.drawCenteredString(font, Component.literal(main), width / 2, top + 80, color);
         String hint = state == State.RESULT || state == State.TOO_EARLY
-                ? "Press SPACE or TRY AGAIN for another round."
-                : "Press SPACE only when the message turns green.";
+                ? "Click TRY AGAIN to start another round."
+                : "Wait for the button to turn green, then click once.";
         graphics.drawCenteredString(font, Component.literal(hint), width / 2, top + 116, 0xFFB8C7D9);
 
         super.render(graphics, mouseX, mouseY, delta);
