@@ -11,7 +11,6 @@ public final class AcademyScreen extends Screen {
     private static final int PANEL_H = 360;
 
     private final Page page;
-    private String status = "";
 
     private enum Page {
         HOME, MOVEMENT, KIT, MONITOR, STATS
@@ -41,7 +40,7 @@ public final class AcademyScreen extends Screen {
         int actionY = top + PANEL_H - 54;
 
         if (page == Page.HOME || page == Page.KIT) {
-            addRenderableWidget(Button.builder(Component.literal("GET MOVEMENT KIT"), button ->
+            addRenderableWidget(Button.builder(Component.literal("GET PARKOUR KIT"), button ->
                     TrainingPvpClient.giveMovementKit(Minecraft.getInstance())
             ).bounds(actionX, actionY, 180, 22).build());
         }
@@ -105,11 +104,10 @@ public final class AcademyScreen extends Screen {
             }
             case KIT -> {
                 heading(g, "KIT LOCKER", x, y);
-                line(g, "A harmless building and movement kit for solo worlds:", x, y + 34);
+                line(g, "A simple building kit for solo parkour practice:", x, y + 34);
                 line(g, "64 Oak Planks  •  32 Scaffolding  •  16 Slime Blocks", x, y + 62);
-                line(g, "16 Honey Blocks  •  Water Bucket  •  8 Ender Pearls", x, y + 86);
-                line(g, "16 Firework Rockets", x, y + 110);
-                line(g, "The button below adds items; it never clears your inventory.", x, y + 154);
+                line(g, "16 Honey Blocks  •  1 Water Bucket", x, y + 86);
+                line(g, "The button below adds items; it never clears your inventory.", x, y + 130);
             }
             case MONITOR -> {
                 heading(g, "CLIENT TICK MONITOR", x, y);
@@ -124,7 +122,7 @@ public final class AcademyScreen extends Screen {
                 line(g, "Reaction attempts: " + TrainingStats.getReactionAttempts(), x, y + 38);
                 line(g, "Successful reactions: " + TrainingStats.getReactionSuccesses(), x, y + 64);
                 line(g, "Best reaction: " + TrainingStats.getBestReactionText(), x, y + 90);
-                line(g, "Movement kits claimed: " + TrainingStats.getMovementKitClaims(), x, y + 116);
+                line(g, "Parkour kits claimed: " + TrainingStats.getMovementKitClaims(), x, y + 116);
                 line(g, "Stats reset when you close the game.", x, y + 166);
             }
         }
